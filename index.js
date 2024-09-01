@@ -10,6 +10,7 @@ const jsonData = JSON.parse(data);
 try {
     const tournament = new Tournament(jsonData);
     tournament.simulateGroupStage();
+    tournament.printGroupResults();
 } catch (error) {
     console.error('Error:', error.message);
 }

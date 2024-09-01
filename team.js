@@ -1,4 +1,10 @@
 class Team {
+    points = 0;
+    pointsGiven = 0;
+    pointsConcided = 0;
+    wins = 0;
+    loses = 0;
+    games=[];
     constructor(name, isoCode, fibaRanking) {
         this.name = name;
         this.isoCode = isoCode;

@@ -29,14 +29,7 @@ class Tournament {
     return { scoreA, scoreB };
   }
 
-  simulateGameWithScore(teamA, teamB) {
-    const minScore = 60;
-    const maxScore = 120;
-
-    const { scoreA, scoreB } = this.simulateGame(teamA.fibaRanking, teamB.fibaRanking, minScore, maxScore);
-
-    console.log(`\t${teamA.name} - ${teamB.name} (${scoreA}:${scoreB})`);
-
+  postMatchStats(teamA, teamB,scoreA,scoreB) {
     teamA.pointsGiven += scoreA;
     teamA.pointsConcided += scoreB;
     teamB.pointsGiven += scoreB;
@@ -54,19 +47,29 @@ class Tournament {
       teamA.points += 1;
     }
   }
+  simulateGameWithScore(teamA, teamB) {
+    const minScore = 60;
+    const maxScore = 120;
 
+    const { scoreA, scoreB } = this.simulateGame(teamA.fibaRanking, teamB.fibaRanking, minScore, maxScore);
 
+    console.log(`\t${teamA.name} - ${teamB.name} (${scoreA}:${scoreB})`);
+    this.postMatchStats(teamA,teamB,scoreA,scoreB);
+  }
 
   loadGroups(groupsData) {
     const groups = {};
     for (const [groupName, teamsData] of Object.entries(groupsData)) {
       groups[groupName] = new Group(groupName, teamsData);
+      this.createGroupStagePairs(groups[groupName].teams);
     }
     return groups;
   }
   createGroupStagePairs(teams) {
     const rounds = [];
     const numTeams = teams.length;
+
+    teams.sort((a, b) => 0.5 - Math.random());
 
     for (let round = 0; round < numTeams - 1; round++) {
       const pairs = [];
@@ -86,26 +89,10 @@ class Tournament {
   }
 
   simulateGroupStage() {
-    for (const groupName in this.groups) {
-      const group = this.groups[groupName];
-
-      group.teams.forEach((team) => {
-        team.points = 0;
-        team.pointsGiven = 0;
-        team.pointsConcided = 0;
-        team.wins = 0;
-        team.loses = 0;
-      });
-
-      group.rounds = this.createGroupStagePairs(group.teams);
-    }
-
     const maxRounds = 3
     const romanNumbers = ["I","II","III","IV"]
-    let counter = 0;
     for (let roundIndex = 0; roundIndex < maxRounds; roundIndex++) {
-      console.log(`Grupna faza - ${romanNumbers[counter]} kolo:`);
-      counter++;
+      console.log(`Grupna faza - ${romanNumbers[roundIndex]} kolo:`);
       for (const groupName in this.groups) {
         const group = this.groups[groupName];
 
@@ -117,7 +104,9 @@ class Tournament {
         }
       }
     }
-
+  }
+  
+  printGroupResults(){
     console.log("Konačan plasman u grupama:")
     for (const groupName in this.groups) {
       const group = this.groups[groupName];
@@ -135,9 +124,7 @@ class Tournament {
 
       console.log();
     }
-
   }
-
 }
 
 module.exports = { Tournament };
